@@ -8,7 +8,6 @@
 
 ```
 git clone https://github.com/AndyTza/FritzSpec.git
-
 ```
 
 2. In the same directory, generate a new directory: ``` mkdir fritz_spectra```
@@ -18,7 +17,6 @@ git clone https://github.com/AndyTza/FritzSpec.git
 4. You're ready to download a spectrum! 
 
 ``` python fritzSpec ZTF_ID_HERE
-
 ```
 
 
