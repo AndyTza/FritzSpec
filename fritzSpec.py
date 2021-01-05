@@ -55,7 +55,6 @@ def download_fritz_spectrum(ztf_obj):
     ztf_obj (str): ZTF id
     """
     for ztf_id in ztf_obj:
-        print ("ZTF name", ztf_id)
         # Load .json that contains all the spectra
         spec = get_source_spectra(ztf_id)
 
