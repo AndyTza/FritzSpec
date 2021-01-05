@@ -14,9 +14,10 @@ git clone https://github.com/AndyTza/FritzSpec.git
 
 3. Go over to fritz.science and fetch the TOKEN - Generate New Token for Command-Line Authentication and PASTE it to the  GETTOKEN variable in `fritzSpec.py`
 
-4. You're ready to download a spectrum! 
+4. You're ready to download a spectrum! See example below:  
 
-``` python fritzSpec ZTF_ID_HERE
+``` python 
+python fritzSpec.py ZTF_ID_HERE
 ```
 
 
