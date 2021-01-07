@@ -59,7 +59,8 @@ def download_fritz_spectrum(ztf_obj):
         spec = get_source_spectra(ztf_id)
 
         if len(spec['data']['spectra'])==0:
-            return ("Sorry, no spectra are available for this target!")
+            return (logging.warning('Sorry, no spectra are available for this target!')
+            
         else:
             spectrum_data = spec['data']['spectra'] # load all spectra
 
