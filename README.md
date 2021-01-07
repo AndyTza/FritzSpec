@@ -20,4 +20,11 @@ git clone https://github.com/AndyTza/FritzSpec.git
 python fritzSpec.py ZTF_ID_HERE
 ```
 
+4A. You can also request to see the spectrum before you download it, by simply running a -h command. Here's a working example:  
+
+``` python
+python ZTF20acymtod -h
+```
+
+
 

@@ -20,16 +20,12 @@ GETTOKEN = ''  # ADD TOKEN from fritz.science here!
 BASEURL = 'https://fritz.science/'
 
 def api(method, endpoint, data=None):
-    ''' Info : Basic API query, takes input the method (eg. GET, POST, etc.), the endpoint (i.e. API url)
+    """Info : Basic API query, takes input the method (eg. GET, POST, etc.), the endpoint (i.e. API url)
                and additional data for filtering
         Returns : response in json format
-        CAUTION! : If the query doesn't go through, try putting the 'data' input in 'data' or 'params'
-                    argument in requests.request call
-    '''
+    """
     headers = {'Authorization': f'token {GETTOKEN}'}
-
     response = requests.request(method, endpoint, json=data, headers=headers)
-
     return response.json()
 
 def get_source_spectra(ztfname):
@@ -40,16 +36,15 @@ def get_source_spectra(ztfname):
 
     Output
     ----
-    Spectrum response in json format
+    Spectrum response in .json format
     """
     url = BASEURL + "api/sources/" + ztfname + "/spectra"
     response = api('GET',url)
     return (response)
 
-
 def download_fritz_spectrum(ztf_obj, plot=False):
     """ Given the ZTF object ID this function will opt the user to choose what spectrum to download and write it to a file directory.
-        If -q, program will quit
+        The user can also decide if they want to preview the plot (via matplotlib) before downloading.
 
     Input
     -----
