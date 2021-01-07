@@ -12,12 +12,12 @@ from lxml import html
 import sys
 from astropy.table import Table
 import logging
+import matplotlib.pyplot as plt
 
 # Define global parameters
 global TOKEN, BASEURL
 GETTOKEN = ''  # ADD TOKEN from fritz.science here!
 BASEURL = 'https://fritz.science/'
-
 
 def api(method, endpoint, data=None):
     ''' Info : Basic API query, takes input the method (eg. GET, POST, etc.), the endpoint (i.e. API url)
@@ -47,39 +47,55 @@ def get_source_spectra(ztfname):
     return (response)
 
 
-def download_fritz_spectrum(ztf_obj):
-    """ Given the ZTF id this function will opt the user to choose what spectrum to download and write it to a file directory.
+def download_fritz_spectrum(ztf_obj, plot=False):
+    """ Given the ZTF object ID this function will opt the user to choose what spectrum to download and write it to a file directory.
+        If -q, program will quit
 
     Input
     -----
-    ztf_obj (str): ZTF id
+    ztf_obj (str): ZTF Object ID
+    plot (bool): If user opts to plot the spectrum, a matplotlib spectrum will be generated for the user
     """
     for ztf_id in ztf_obj:
         # Load .json that contains all the spectra
         spec = get_source_spectra(ztf_id)
+        if spec['status']=="error":
+            return (logging.warning(' Oh no, it looks like your ZTF_id input was invalid, please try again! '))
 
         if len(spec['data']['spectra'])==0:
-            return (logging.warning('Sorry, no spectra are available for this target!')
-            
+            return (logging.warning('Sorry, no spectra are available for this target!'))
         else:
             spectrum_data = spec['data']['spectra'] # load all spectra
 
             for ss in enumerate(spec['data']['spectra']):
                 indx, s = ss[0], ss[1] # counting index, spectrum dict.
-                print ("%s)"%indx, s['observed_at'], s['instrument_name'])
+                print ("{}) {} {}".format(indx, s['observed_at'], s['instrument_name']))
 
             # User decides what index to download
-            usr_choice = int(input("Choose #-index spectrum to download: "))
-            user_spec = spectrum_data[usr_choice] # select spectrum user wants
+            usr_choice = input("Choose #-index spectrum to download [-q to exit]: ")
 
-            ell, flux = user_spec['wavelengths'], user_spec['fluxes']
-            Table([ell, flux]).write('fritz_spectra/%s_%s_%s.ascii'%(ztf_id, user_spec['instrument_name'], user_spec['observed_at'].split("T")[0]),
-                format='ascii.fast_no_header', overwrite=True) # write to spectra directory
+            if usr_choice!="-q":
+                user_spec = spectrum_data[int(usr_choice)] # select spectrum user wants
 
+                ell, flux = user_spec['wavelengths'], user_spec['fluxes']
+                if plot:
+                    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10,5))
+                    ax.plot(ell, flux, lw=0.8, color='k')
+                    ax.set_xlabel(r"$\lambda$ [Å]", fontsize=18)
+                    ax.set_ylabel(r"Normalized Flux", fontsize=18)
+                    ax.set_title(r"{} {} {}".format(ztf_id, user_spec['instrument_name'], user_spec['observed_at'].split("T")[0]), fontsize=18)
+                    plt.show()
+
+                # Store data as astropy table & write
+                Table([ell, flux]).write('fritz_spectra/%s_%s_%s.ascii'%(ztf_id, user_spec['instrument_name'], user_spec['observed_at'].split("T")[0]),
+                    format='ascii.fast_no_header', overwrite=True) # write to spectra directory
+                logging.warning('Download completed!')
 
 def main():
-    download_fritz_spectrum(sys.argv[1:])
-    logging.warning('Download completed!')
+    if sys.argv[2:][0]=='-h':
+        download_fritz_spectrum(sys.argv[1:], plot=True)
+    else:
+        download_fritz_spectrum(sys.argv[1:], plot=False)
 
 if __name__ == "__main__":
     main()
